@@ -5,6 +5,7 @@
 **/dist/
 **/target/
 *.log
+*.log.*
 .idea/
 .vscode/
 data/
