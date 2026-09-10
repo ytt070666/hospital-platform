@@ -1,0 +1,22 @@
+name: quality
+on: [push, pull_request]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21', cache: maven }
+      - run: mvn -B clean test package
+        working-directory: services/hospital-backend
+  frontend:
+    runs-on: ubuntu-latest
+    strategy: { matrix: { app: [hospital-admin, hospital-web, hospital-miniprogram] } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm, cache-dependency-path: apps/${{ matrix.app }}/package-lock.json }
+      - run: npm ci
+        working-directory: apps/${{ matrix.app }}
+      - run: npm run lint && npm run typecheck && npm run build${{ matrix.app == 'hospital-miniprogram' && ':mp-weixin' || '' }}
+        working-directory: apps/${{ matrix.app }}

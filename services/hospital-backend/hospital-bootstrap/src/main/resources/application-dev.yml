@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+logging:
+  level:
+    com.hospital.platform: INFO
+hospital:
+  clinical:
+    diagnosis-catalog-mode: TEST
+  patient:
+    sms:
+      test-enabled: true

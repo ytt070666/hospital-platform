@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import {onMounted,ref} from 'vue';import http from '../api/http';
+type PatientRow={id:number;patientNo:string;name:string;mobile:string;realNameStatus:string;memberCount:number;createdAt:string};
+type PatientDetail={patientNo:string;name:string;mobile:string;realNameStatus:string};
+type MemberRow={name:string;relationship:string;idNumber:string;status:string};
+const rows=ref<PatientRow[]>([]),total=ref(0),patientNo=ref(''),mobile=ref(''),loading=ref(false),detail=ref<PatientDetail|null>(null),members=ref<MemberRow[]>([]);
+async function load(){loading.value=true;try{const r=await http.get('/admin/patients',{params:{patientNo:patientNo.value||undefined,mobile:mobile.value||undefined,page:1,pageSize:50}});rows.value=r.data.data.records;total.value=r.data.data.total;}finally{loading.value=false;}}
+async function open(row:PatientRow){detail.value=(await http.get(`/admin/patients/${row.id}`)).data.data;members.value=(await http.get(`/admin/patients/${row.id}/members`)).data.data;}
+onMounted(load);
+</script>
+<template><section><h1>患者管理</h1><p>患者与后台工作人员账号分离；列表仅返回服务端脱敏字段。</p><el-form inline><el-form-item label="患者编号"><el-input v-model="patientNo" clearable/></el-form-item><el-form-item label="手机号"><el-input v-model="mobile" clearable/></el-form-item><el-button type="primary" @click="load">查询</el-button></el-form><el-table :data="rows" v-loading="loading" @row-click="open"><el-table-column prop="patientNo" label="患者编号"/><el-table-column prop="name" label="姓名（脱敏）"/><el-table-column prop="mobile" label="手机号（脱敏）"/><el-table-column prop="realNameStatus" label="实名状态"/><el-table-column prop="memberCount" label="就诊人数"/><el-table-column prop="createdAt" label="创建时间"/></el-table><p>共 {{total}} 条</p><el-drawer v-model="detail" title="患者详情" size="520px"><template v-if="detail"><p>患者编号：{{detail.patientNo}}</p><p>姓名：{{detail.name}}</p><p>手机号：{{detail.mobile}}</p><p>实名状态：{{detail.realNameStatus}}</p><h3>就诊人</h3><el-table :data="members"><el-table-column prop="name" label="姓名"/><el-table-column prop="relationship" label="关系"/><el-table-column prop="idNumber" label="证件（脱敏）"/><el-table-column prop="status" label="状态"/></el-table></template></el-drawer></section></template>

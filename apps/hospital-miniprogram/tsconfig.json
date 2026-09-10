@@ -1,0 +1,1 @@
+{"compilerOptions":{"target":"ES2020","module":"ESNext","moduleResolution":"bundler","strict":true,"skipLibCheck":true,"types":["@dcloudio/types","@dcloudio/uni-app"]},"include":["src/**/*.ts","src/**/*.vue","env.d.ts"]}

@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:hospital;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  data.redis.repositories.enabled: false
+hospital:
+  patient:
+    encryption-key: ${PATIENT_DATA_ENCRYPTION_KEY:}
+    hash-key: ${PATIENT_DATA_HASH_KEY:}
+    sms:
+      test-enabled: true
+  security:
+    jwt-secret: ${JWT_SECRET:}
+    cors-origins: http://localhost:5173
+  bootstrap:
+    admin-username: test-admin
+    admin-password: correct-horse-battery-staple

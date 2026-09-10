@@ -1,0 +1,1 @@
+import axios from 'axios'; const http=axios.create({baseURL:import.meta.env.VITE_API_BASE_URL??'http://localhost:8080/api/v1',timeout:10000}); http.interceptors.response.use(response=>response,error=>Promise.reject(new Error(error.response?.status===401?'请先登录后再继续操作':'服务暂不可用，请稍后重试'))); export default http;

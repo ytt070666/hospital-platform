@@ -1,0 +1,9 @@
+hospital:
+  clinical:
+    diagnostic:
+      # Production must never fall back to test LIS/RIS/PACS fixtures.
+      test-provider-enabled: false
+      patient-release-policy: MANUAL_RELEASE
+  payment:
+    # Production can start with no provider. A paid-payment creation then fails closed.
+    test-signing-key: ""

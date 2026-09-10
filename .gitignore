@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+**/node_modules/
+**/dist/
+**/target/
+*.log
+.idea/
+.vscode/
+data/
+.tools/
+.runtime/
+.playwright-cli/
+Thumbs.db
+.DS_Store

@@ -1,0 +1,3 @@
+package com.hospital.platform.iam.application;
+import com.hospital.platform.common.error.BusinessException; import com.hospital.platform.common.error.ErrorCode; import java.time.Duration; import org.springframework.data.redis.core.StringRedisTemplate; import org.springframework.stereotype.Service;
+@Service public class RedisRateLimiter { private final StringRedisTemplate redis; public RedisRateLimiter(StringRedisTemplate redis){this.redis=redis;} public void check(String key,int limit,Duration ttl){Boolean first=redis.opsForValue().setIfAbsent(key,"1",ttl); if(Boolean.TRUE.equals(first))return; Long count=redis.opsForValue().increment(key); if(count!=null&&count>limit) throw new BusinessException(ErrorCode.RATE_LIMITED);}}

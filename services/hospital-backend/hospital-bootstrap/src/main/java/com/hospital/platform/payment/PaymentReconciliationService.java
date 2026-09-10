@@ -1,0 +1,9 @@
+package com.hospital.platform.payment;
+import static com.hospital.platform.payment.PaymentSupport.*;
+import java.util.Map;
+import org.springframework.stereotype.Service;
+@Service public class PaymentReconciliationService {
+  private final PaymentSupport s; public PaymentReconciliationService(PaymentSupport s){this.s=s;}
+  public int reconcile(){int n=0;n+=detect("PAYMENT_SUCCESS_REGISTRATION_NOT_PAID","PAYMENT_ORDER","select p.id,p.status local_state from payment_order p join registration_order r on r.id=p.registration_order_id where p.status='SUCCESS' and r.status<>'PAID'");n+=detect("REGISTRATION_PAID_NO_PAYMENT","REGISTRATION_ORDER","select r.id,r.status local_state from registration_order r where r.status='PAID' and r.amount_cent>0 and not exists(select 1 from payment_order p where p.registration_order_id=r.id and p.status='SUCCESS')");n+=detect("REFUND_EXCEEDS_PAID","REGISTRATION_ORDER","select id,concat(refunded_amount_cent,'/',amount_cent) local_state from registration_order where refunded_amount_cent>amount_cent");n+=detect("CANCELLED_PAID_NO_REFUND","APPOINTMENT","select a.id,a.status local_state from appointment a join registration_order r on r.appointment_id=a.id join payment_order p on p.registration_order_id=r.id and p.status='SUCCESS' where a.status='CANCELLED' and not exists(select 1 from refund_order f where f.appointment_id=a.id and f.payment_order_id=p.id)");return n;}
+  private int detect(String type,String resource,String sql){int count=0;for(Map<String,Object> row:s.db.queryForList(sql)){try{s.db.update("insert into payment_reconciliation_record(anomaly_type,resource_type,resource_id,severity,local_state,resolution,status,trace_id) values(?,?,?,'HIGH',?,'MANUAL_REVIEW_REQUIRED','OPEN',?)",type,resource,id(row,"id"),string(row,"local_state"),trace());count++;}catch(org.springframework.dao.DuplicateKeyException ignored){}}return count;}
+}

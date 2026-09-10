@@ -1,0 +1,1 @@
+{"compilerOptions":{"tsBuildInfoFile":"./node_modules/.tmp/tsconfig.app.tsbuildinfo","target":"ES2022","module":"ESNext","lib":["ES2022","DOM","DOM.Iterable"],"types":["vite/client"],"skipLibCheck":true,"moduleResolution":"bundler","verbatimModuleSyntax":true,"moduleDetection":"force","noEmit":true,"strict":true,"jsx":"preserve"},"include":["src/**/*.ts","src/**/*.vue"]}

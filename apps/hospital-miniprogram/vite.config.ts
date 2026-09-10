@@ -1,0 +1,1 @@
+import {defineConfig,type PluginOption} from 'vite';import uniModule from '@dcloudio/vite-plugin-uni';const uni=(uniModule as unknown as {default?:()=>PluginOption[]}).default??(uniModule as unknown as ()=>PluginOption[]);export default defineConfig({plugins:uni()});

@@ -1,0 +1,110 @@
+spring:
+  application:
+    name: hospital-backend
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:hospital_platform}?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: ${MYSQL_USERNAME:hospital_app}
+    password: ${MYSQL_PASSWORD:}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:hospital_mq}
+    password: ${RABBITMQ_PASSWORD:}
+    listener:
+      simple:
+        default-requeue-rejected: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
+server:
+  forward-headers-strategy: framework
+  error:
+    include-stacktrace: never
+    include-message: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+hospital:
+  payment:
+    payment-timeout-seconds: ${PAYMENT_TIMEOUT_SECONDS:900}
+    worker-enabled: ${PAYMENT_WORKER_ENABLED:true}
+    worker-interval-ms: 30000
+    batch-size: 100
+    callback-per-minute: 1000
+    test-signing-key: ${PAYMENT_TEST_SIGNING_KEY:}
+    # Adapter configuration only; no real gateway implementation in STEP 6.1.
+    wechat:
+      mch-id: ${WECHAT_PAY_MCH_ID:}
+      app-id: ${WECHAT_PAY_APP_ID:}
+      api-v3-key: ${WECHAT_PAY_API_V3_KEY:}
+      private-key-path: ${WECHAT_PAY_PRIVATE_KEY_PATH:}
+      cert-serial-no: ${WECHAT_PAY_CERT_SERIAL_NO:}
+      platform-cert-path: ${WECHAT_PAY_PLATFORM_CERT_PATH:}
+      notify-url: ${WECHAT_PAY_NOTIFY_URL:}
+      refund-notify-url: ${WECHAT_PAY_REFUND_NOTIFY_URL:}
+    alipay:
+      app-id: ${ALIPAY_APP_ID:}
+      private-key-path: ${ALIPAY_PRIVATE_KEY_PATH:}
+      public-key-path: ${ALIPAY_PUBLIC_KEY_PATH:}
+      notify-url: ${ALIPAY_NOTIFY_URL:}
+      gateway: ${ALIPAY_GATEWAY:https://openapi.alipay.com/gateway.do}
+  scheduling:
+    public-max-query-days: 31
+  patient:
+    encryption-key: ${PATIENT_DATA_ENCRYPTION_KEY:}
+    hash-key: ${PATIENT_DATA_HASH_KEY:}
+    access-token-minutes: 15
+    refresh-token-days: 7
+    sms:
+      test-enabled: false
+  appointment:
+    hold-ttl-seconds: ${APPOINTMENT_HOLD_TTL_SECONDS:300}
+    cancel:
+      deadline-minutes-before-start: ${APPOINTMENT_CANCEL_DEADLINE_MINUTES_BEFORE_START:30}
+    require-verified-identity: ${APPOINTMENT_REQUIRE_VERIFIED_IDENTITY:false}
+    booking:
+      max-days-ahead: 30
+      min-advance-minutes: 15
+    expiration:
+      batch-size: 100
+      interval-ms: 30000
+  clinical:
+    diagnostic:
+      test-provider-enabled: ${CLINICAL_TEST_PROVIDER_ENABLED:true}
+      patient-release-policy: ${CLINICAL_DIAGNOSTIC_PATIENT_RELEASE_POLICY:IMMEDIATE_AFTER_FINAL}
+    encounter-complete:
+      require-signed-record: ${CLINICAL_REQUIRE_SIGNED_RECORD:true}
+    patient-summary:
+      enabled: false
+    diagnosis-catalog-mode: ${CLINICAL_DIAGNOSIS_CATALOG_MODE:HOSPITAL}
+  security:
+    jwt-secret: ${JWT_SECRET:}
+    cors-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:5174,http://localhost:5175,http://127.0.0.1:5173,http://127.0.0.1:5174,http://127.0.0.1:5175}
+    access-token-minutes: 15
+    refresh-token-days: 7
+  bootstrap:
+    admin-username: ${BOOTSTRAP_ADMIN_USERNAME:}
+    admin-password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:}
+    secret-key: ${MINIO_SECRET_KEY:}
+    bucket: hospital-private
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

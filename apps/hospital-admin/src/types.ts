@@ -1,0 +1,1 @@
+export interface ApiResponse<T>{code:number|string;message:string;data:T;traceId:string} export interface Menu{id:number|string;menu_code:string;menu_name:string;route_path:string;component?:string} export interface Session{id:string;username:string;clientType:string;roles:string[];permissions:string[];menus:Menu[]}

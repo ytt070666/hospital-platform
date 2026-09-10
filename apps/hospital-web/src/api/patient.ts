@@ -1,0 +1,6 @@
+import axios from 'axios';
+
+const patient = axios.create({baseURL:import.meta.env.VITE_API_BASE_URL??'http://localhost:8080/api/v1',timeout:10000});
+patient.interceptors.request.use(config=>{const token=localStorage.getItem('hospital.patient.access');if(token)config.headers.Authorization=`Bearer ${token}`;return config;});
+patient.interceptors.response.use(response=>response,async error=>{const request=error.config;if(error.response?.status!==401||request?._retry||request?.url?.includes('/patient/auth/refresh'))return Promise.reject(error);const refresh=localStorage.getItem('hospital.patient.refresh');if(!refresh)return Promise.reject(error);request._retry=true;try{const response=await patient.post('/patient/auth/refresh',{refreshToken:refresh,clientType:'WEB_PATIENT'});localStorage.setItem('hospital.patient.access',response.data.data.accessToken);localStorage.setItem('hospital.patient.refresh',response.data.data.refreshToken);request.headers.Authorization=`Bearer ${response.data.data.accessToken}`;return patient(request);}catch(e){localStorage.removeItem('hospital.patient.access');localStorage.removeItem('hospital.patient.refresh');return Promise.reject(e);}});
+export default patient;
